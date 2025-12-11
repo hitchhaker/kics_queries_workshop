@@ -1,6 +1,6 @@
 package Cx
 
-import data.generic.terraform as tf_lib
+import data.generic.common as common_lib
 
 CxPolicy[result] {
 	doc := input.document[i]
@@ -10,7 +10,7 @@ CxPolicy[result] {
 	result := {
 		"documentId": input.document[i].id,
 		"resourceType": "aws_security_group",
-		"resourceName": tf_lib.get_resource_name(resource, securityGroupName),
+		"resourceName": get_resource_name(resource, securityGroupName),
 		"searchKey": sprintf("aws_security_group[%s]", [securityGroupName]),
 		"issueType": "IncorrectValue",
 		"keyExpectedValue": sprintf("'aws_security_group[%s]' should be used", [securityGroupName]),
@@ -49,4 +49,47 @@ is_used(securityGroupName, doc, resource) {
     [path, value] := walk(doc)
 	securityGroupUsed := value.security_groups[_]
 	sec_group_used == securityGroupUsed
+}
+
+############################
+# Inlined helpers from terraform.rego and common.rego
+# ############################
+
+get_tag_name_if_exists(resource) = name {
+	name := resource.tags.Name
+} else = name {
+	tag := resource.Properties.Tags[_]
+	tag.Key == "Name"
+	name := tag.Value
+} else = name {
+	tag := resource.Properties.FileSystemTags[_]
+	tag.Key == "Name"
+	name := tag.Value
+} else = name {
+	tag := resource.Properties.Tags[key]
+	key == "Name"
+	name := tag
+} else = name {
+	tag := resource.spec.forProvider.tags[_]
+	tag.key == "Name"
+	name := tag.value
+} else = name {
+	tag := resource.properties.tags[key]
+	key == "Name"
+	name := tag
+}
+
+get_resource_name(resource, resourceDefinitionName) = name {
+	name := resource["name"]
+} else = name {
+	name := resource["display_name"]
+}  else = name {
+	name := resource.metadata.name
+} else = name {
+	prefix := resource.name_prefix
+	name := sprintf("%s<unknown-sufix>", [prefix])
+} else = name {
+	name := get_tag_name_if_exists(resource)
+} else = name {
+	name := resourceDefinitionName
 }
