@@ -1,7 +1,5 @@
 package Cx
 
-import data.generic.common as common_lib
-
 CxPolicy[result] {
 	doc := input.document[i]
 	resource := doc.resource.aws_security_group[securityGroupName]
