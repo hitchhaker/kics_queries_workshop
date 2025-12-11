@@ -1,5 +1,5 @@
 ## Exercise 1 — Extending an Existing Query
-### Descriptions
+### Description
 In this exercise, you will improve an existing KICS query by addressing a false positive (FP).
 The provided query checks whether defined `aws_security_group` resources are used within a Terraform project. It uses the built-in `walk` function to iterate through the document and a helper function `is_used` with several patterns to detect usage.
 However, this query currently misses one case: `aws_security_group` resources used by `aws_elasticache_instance` resources. As a result, it produces a false positive if a security group is used in this way.
