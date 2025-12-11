@@ -9,6 +9,13 @@ However, this query currently misses one case: `aws_security_group` resources us
 
 👉 Specifically, you need to add a new clause to `is_used` that matches the usage of `aws_security_group` in the `security_group_ids` field of `aws_elasticache_instance`.
 
+👉 To prepare the Rego Playground:
+  - Choose `Rego (v0)` in Rego Playground header toolbar.
+  - Disable `Strict` checkbox in `Options` dropdown list in Rego Playground header toolbar.
+  - (Optional) Enable `Coverage` checkbox in `Options` dropdown list in Rego Playground header toolbar.
+  - Paste payloads into the `INPUT` field. They are just a KICS internal representation JSON of test .tf files.
+  - Paste query.rego into the IDE of Rego Playground.
+
 👉 Once added, this will eliminate the false positive.
 
 ### Provided Files
@@ -21,7 +28,6 @@ However, this query currently misses one case: `aws_security_group` resources us
 - Carefully read the provided query.rego;
 - Understand how the `is_used` function works — note the multiple patterns are already present;
 - Analyze the payloads provided;
-- Copy any required auxiliary functions from kics internal libraries (you can find them in the KICS repo under assets/libraries);
 - Prepare Rego Playground environment and verify that everything is ready to run.
 - Add a new is_used clause to handle `aws_elasticache_instance` usage;
 - Run the provided tests to verify that:
